@@ -1,0 +1,13 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/DotNetCoreAPI/v16/TestStore/0/testlog.manifest
+/.vs/DotNetCoreAPI/v16/TestStore/0/000.testlog
+/.vs/DotNetCoreAPI/v16/TestStore/0
+/.vs/DotNetCoreAPI/v16/.suo
+/.vs/DotNetCoreAPI/v16
+/.vs/DotNetCoreAPI/DesignTimeBuild/.dtbcache.v2
+/.vs/DotNetCoreAPI/DesignTimeBuild
+/src/bin/Debug/netcoreapp3.1
+/src/obj

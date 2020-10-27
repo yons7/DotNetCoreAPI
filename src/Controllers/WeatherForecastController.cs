@@ -1,39 +1,91 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using System;
+using System.Threading.Tasks;
 
 namespace DotNetCoreAPI.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("commercial-operations")]
     public class WeatherForecastController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
+        private static int testCase;
 
-        private readonly ILogger<WeatherForecastController> _logger;
-
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        /// <summary>
+        /// Creates the commercial operation asynchronous.
+        /// </summary>
+        /// <param name="commercialOperationCreateRequest"></param>
+        /// <returns>CommercialOperation</returns>
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> CreateCommercialOperationAsync([FromBody] CommercialOperationCreateRequest commercialOperationCreateRequest)
         {
-            _logger = logger;
+            int id = 123456;
+
+            if (testCase == 0)
+            {
+                testCase++;
+                return CreatedAtAction("GetCommercialOperation", new { commercialOperationId = id }, id);
+            }
+
+            if (testCase == 1)
+            {
+                testCase++;
+                return StatusCode(StatusCodes.Status400BadRequest, $"\"\\\"Validation error code: 4001, Active period date (startdate and enddate) is not valid.\\\"\"");
+            }
+
+            if (testCase == 2)
+            {
+                testCase++;
+                return StatusCode(StatusCodes.Status500InternalServerError, $"<h1>Internal server error</h1><p>The circuit is now open and is not allowing calls.</p>");
+            }
+
+            if (testCase == 3)
+            {
+                testCase++;
+                return StatusCode(StatusCodes.Status504GatewayTimeout, $"<html><head><title>504 Gateway Time-out</title></head><body><center>" +
+                    $"<h1>504 Gateway Time-out</h1></center><hr><center>nginx/1.19.1</center></body></html>");
+            }
+
+            if (testCase == 4)
+            {
+                testCase++;
+                return StatusCode(StatusCodes.Status201Created);
+            }
+
+            if (testCase == 5)
+            {
+                testCase++;
+                return StatusCode(StatusCodes.Status401Unauthorized);
+            }
+
+            testCase = 0;
+
+            await Task.Delay(TimeSpan.FromSeconds(60));
+            return CreatedAtAction("GetCommercialOperation", new { commercialOperationId = id }, id);
         }
 
-        [HttpGet]
-        public IEnumerable<WeatherForecast> Get()
+        /// <summary>
+        /// Gets the commercial operation asynchronous.
+        /// </summary>
+        /// <param name="commercialOperationId">The commercial operation identifier.</param>
+        /// <returns>
+        /// CommercialOperation
+        /// </returns>
+        [HttpGet("{commercialOperationId}", Name = "GetCommercialOperation")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<CommercialOperation> GetCommercialOperationAsync([FromRoute] string commercialOperationId)
         {
-            var rng = new Random();
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                Date = DateTime.Now.AddDays(index),
-                TemperatureC = rng.Next(-20, 55),
-                Summary = Summaries[rng.Next(Summaries.Length)]
-            })
-            .ToArray();
+            await Task.Yield();
+            return new CommercialOperation {
+                Id = int.Parse(commercialOperationId)
+            };
         }
     }
 }
